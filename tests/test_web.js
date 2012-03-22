@@ -87,7 +87,7 @@ exports.tests = [
     assert.deepEqual(JSON.parse(data), [
       "GET",
       "/toto/titi?param=tata&param2=tutu",
-      {"host":"127.0.0.1","connection":"close","toto":"titi"},
+      {"host":"127.0.0.1","connection":"keep-alive","toto":"titi"},
       ''
     ]);
   }, options);
@@ -103,7 +103,7 @@ exports.tests = [
       "/toto/titi?param=tata",
       {
         "host": "127.0.0.1",
-        "connection": "close",
+        "connection": "keep-alive",
         "content-type": "application/x-www-form-urlencoded",
         "content-length": "11"
       },
