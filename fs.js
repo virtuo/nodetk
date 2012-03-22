@@ -82,8 +82,8 @@ var find_modules_paths = exports.find_modules_paths = function(module_names) {
   module_names.forEach(function(name){
     results[name] = null;
   });
-  var dirs = require.paths.slice();
-  require.paths.forEach(function(path) {
+  var dirs = process.env['NODE_PATH'].split(':');
+  dirs.forEach(function(path) {
     var path2 = path + "/libraries"; // to get node libraries
     if(existsSync(path2)) dirs.push(path2);
   });
