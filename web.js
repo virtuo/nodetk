@@ -49,7 +49,8 @@ var REQ = function(type, url, data, options, callback) {
     if(qs) qs += '&';
     qs += querystring.stringify(data);
   }
-  var request = client.request(type, purl.pathname +'?'+ qs, headers);
+  if(qs) qs = '?' + qs
+  var request = client.request(type, purl.pathname + qs, headers);
   if(body) {
     request.write(body, 'utf8');
   }
