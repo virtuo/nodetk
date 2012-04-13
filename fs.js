@@ -113,8 +113,9 @@ var find_packages_paths = exports.find_packages_paths = function(package_names, 
   var package2dir = {};
   var cpt_dirs = 0;
   package_names.forEach(function(pname) {
-    for(var i=0; i<require.paths.length; i++) {
-      var dir_path = PATH.normalize(require.paths[i] + '/' + pname);
+    var node_paths = process.env['NODE_PATH'].split(':');
+    for(var i=0; i<node_paths.length; i++) {
+      var dir_path = PATH.normalize(node_paths[i] + '/' + pname);
       if(existsSync(dir_path)) {
         package2dir[pname] = dir_path;
         cpt_dirs += 1;

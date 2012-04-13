@@ -50,7 +50,6 @@ exports.serve_modules_connector = function(options) {
         name = pathname.slice(1, pathname.length-3);
         before = 'require.define({"' + name + '":';
         before += 'function(require, exports, module) {';
-        before += 'require.paths = [];';
         after = '}}, []);';
       }
       web.serve_static_file(fpath, response, before, after);
