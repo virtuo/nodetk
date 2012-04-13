@@ -34,8 +34,8 @@ exports.tests = [
   var connector = server_tools.get_connector_from_regexp_routes({
     'GET': [
       ['/a', MUST_NOT_BE_CALLED],
-      ['/toto', function(match) {assert.equal(match.length, 1)}],
-      [/titi\/(\w+)/, function(match) {assert.equal(match[1], 'some_id')}]
+      ['/toto', function(req, res, match) {assert.equal(match.length, 1)}],
+      [/titi\/(\w+)/, function(req, res, match) {assert.equal(match[1], 'some_id')}]
     ]
   });
   var req = {url: 'http://domain.com/toto', method: 'GET'};

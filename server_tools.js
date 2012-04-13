@@ -32,7 +32,7 @@ exports.get_connector_from_regexp_routes = function(routes) {
    * Arguments:
    *   - routes: hash looking like this:
    *      {'GET': [['/toto/(\\w+)'}, fct]],
-   *       'POST': [['...', fct],
+   *       'POST': [['...', fct(req, res, match)],
    *                ['...', fct]],
    *       }
    *
@@ -67,7 +67,7 @@ exports.get_connector_from_regexp_routes = function(routes) {
     var actions = routes[req.method] || [];
     for(var i=0; i<actions.length; i++) {
       var match = url.pathname.match(actions[i][0]);
-      if (match) return actions[i][1](match);
+      if (match) return actions[i][1](req, res, match);
     };
     next();
   };
