@@ -1,4 +1,5 @@
 var URL = require("url");
+var utils = require("nodetk/utils");
 
 
 exports.get_connector_from_str_routes = function(routes) {
@@ -24,6 +25,53 @@ exports.get_connector_from_str_routes = function(routes) {
     else next();
   };
 };
+
+exports.get_connector_from_regexp_routes = function(routes) {
+  /* Returns connect middleware from given routes.
+   *
+   * Arguments:
+   *   - routes: hash looking like this:
+   *      {'GET': [['/toto/(\\w+)'}, fct]],
+   *       'POST': [['...', fct],
+   *                ['...', fct]],
+   *       }
+   *
+   * The given routes dictionnary is used to associate a route
+   * to a fct to execute.
+   *  - If a route doesn't match any route in the dictionnary,
+   * next() is called.
+   *  - If a route is matched, then the associated fct is called
+   * with the match object as argument.
+   *
+   * NOTE: pathnames must be strings compilable to regexp or regexps.
+   * String are modified as following to construct the regexps:
+   *  - '^' is appended at beggining and '$' at end;
+   *  - '/' ar escaped.
+   * In case of strings, '/' are escaped.
+   * Beginning/end of line chars will be added before compiling.
+   *
+   */
+  // Copy routes and replace strings by regexps:
+  routes = utils.deep_extend({}, routes);
+  utils.each(routes, function(verb, actions) {
+    for(var i; i=0; i<actions.length) {
+      var route = actions[i][0];
+      if (typeof(route) == 'string') {
+        route = route.replace(/\//g, '\\/')
+        actions[i][0] = new RegExp('^' + route + '$');
+      }
+    }
+  });
+  return function(req, res, next) {
+    var url = URL.parse(req.url);
+    var actions = routes[req.method] || [];
+    for(var i=0; i<actions.length; i++) {
+      var match = url.pathname.match(actions[i][0]);
+      if (match) return actions[i][1](match);
+    };
+    next();
+  };
+}
 
 
 exports.redirect = function(res, url) {
