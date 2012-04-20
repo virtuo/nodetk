@@ -58,7 +58,9 @@ var run_test = function(name, expected_asserts, test, callback) {
                            expected_asserts+' asserts expected)...');
     var test_waiter = CLB.get_waiter(expected_asserts, function(){
       verbose && console.log(name + ': ' + expected_asserts + " asserts done.");
-      callback && callback();
+      // Note: here we use nextTick so that the test can finish its
+      // instructions before we pass to the next step.
+      callback && process.nextTick(callback);
     });
     custom_assert._set_assert_callback(test_waiter);
     test();
