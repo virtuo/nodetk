@@ -1,4 +1,6 @@
-var assert = require('nodetk/testing/custom_assert');
+var assert = require('nodetk/testing/custom_assert')
+  , querystring = require('querystring')
+  ;
 
 
 exports.get_expected_res = function(expected_status_code) {
@@ -34,3 +36,20 @@ exports.get_expected_redirect_res = function(location_) {
   }
 };
 
+
+exports.get_fake_post_request = function(url, data, error) {
+  /* Returns fake request object that can be parsed by formidable. */
+  var req = {method: 'POST', url: url};
+  req.headers = {'content-type': 'application/x-www-form-urlencoded'};
+  req.on = function(event_type, callback) {
+    if(event_type == 'data') process.nextTick(function() {
+      callback(querystring.stringify(data));
+    });
+    else if(event_type == 'error' && error) process.nextTick(function() {
+      callback(error);
+    });
+    else if(event_type == 'end' && !error) process.nextTick(callback);
+    return req
+  };
+  return req;
+};
