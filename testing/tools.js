@@ -1,4 +1,5 @@
 var assert = require('nodetk/testing/custom_assert')
+  , utils = require('nodetk/utils')
   , querystring = require('querystring')
   ;
 
@@ -37,10 +38,13 @@ exports.get_expected_redirect_res = function(location_) {
 };
 
 
-exports.get_fake_post_request = function(url, data, error) {
+exports.get_fake_post_request = function(url, data, error,
+                                         additional_headers) {
   /* Returns fake request object that can be parsed by formidable. */
   var req = {method: 'POST', url: url};
-  req.headers = {'content-type': 'application/x-www-form-urlencoded'};
+  req.headers = utils.extend({}, {
+    'content-type': 'application/x-www-form-urlencoded',
+  }, additional_headers);
   req.on = function(event_type, callback) {
     if(event_type == 'data') process.nextTick(function() {
       callback(querystring.stringify(data));
